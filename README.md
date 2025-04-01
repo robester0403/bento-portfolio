@@ -1,20 +1,14 @@
-<div align="center">
-  <img alt="Bent-o logo" src="/public/logo.svg" width="100" alt="From logoipsum" />
-</div>
+<p align="center">Bento Porfolio</p>
 
-<h1 align="center">
-  Bent-o 
-</h1>
+#### The WHY?
 
-<p align="center">A bento style theme made for you!</p>
+Maintain a portfolio and updating it is boring.
 
-![Bento Mockup](/public/bent-o.png)
+You are just adding and deleting sections. Moving things around. Adding and deleting new sections. Sure you could use some site to do it... but do you want to?
 
-#### DOCUMENTATION
+Bento Portfolio makes it so you can move the components around and then hit save. At least that's what it's going to be when finished. Specifically, it's aiming to abstract the layout so you can just focus on the content.
 
--   Version: 1.0.0
--   Created: 12 Jan 2024
--   Last update: 12 Jan 2024
+Hungry for something good? Try Bento Portfolio.
 
 #### Key Features:
 
@@ -23,10 +17,6 @@
 -   Blazingly Fast
 -   Responsive & SEO-friendly with canonical URLs, OpenGraph data and Meta tags.
 -   Made with NextJS and TailwindCSS
-
----
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ---
 
@@ -92,4 +82,4 @@ Logo used from https://logoipsum.com/.
 
 ---
 
-Made by [chrstnl](https://chrstnl.com/)
+Forked from [chrstnl](https://chrstnl.com/)
