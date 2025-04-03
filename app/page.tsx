@@ -2,33 +2,20 @@
 
 import { Button } from "@/components/global/button";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface GridItem {
     id: string;
-    order: number;
 }
 
 export default function Home() {
-    const [items, setItems] = useState<GridItem[]>([
-        { id: "hero", order: 1 },
-        { id: "stats", order: 2 },
-        { id: "info", order: 3 },
-        { id: "about", order: 4 },
-        { id: "logo", order: 5 },
-        { id: "quote", order: 6 },
-        { id: "banner1", order: 7 },
-        { id: "banner2", order: 8 }
-    ]);
+    // TODO: Grab from server later
+    const initialItems = [{ id: "hero" }, { id: "stats" }, { id: "info" }, { id: "about" }, { id: "quote" }, { id: "logo" }, { id: "banner1" }];
+
     const [draggedId, setDraggedId] = useState<string | null>(null);
     const [dropTargetId, setDropTargetId] = useState<string | null>(null);
     const [dropPosition, setDropPosition] = useState<{ targetId: string; isAfter: boolean } | null>(null);
-    const [previewItems, setPreviewItems] = useState<GridItem[]>(items);
-
-    // Keep preview in sync with actual items
-    useEffect(() => {
-        setPreviewItems(items);
-    }, [items]);
+    const [renderedList, setRenderedList] = useState<GridItem[]>(initialItems);
 
     const reorderItems = (currentItems: GridItem[], draggedId: string, targetId: string, isAfter: boolean): GridItem[] => {
         const draggedItem = currentItems.find((item) => item.id === draggedId);
@@ -36,21 +23,14 @@ export default function Home() {
 
         if (!draggedItem || !targetItem) return currentItems;
 
-        // Create a new array without the dragged item
         let newOrder = currentItems.filter((item) => item.id !== draggedId);
 
-        // Find where to insert the dragged item
         const targetIndex = newOrder.findIndex((item) => item.id === targetId);
         const insertIndex = isAfter ? targetIndex + 1 : targetIndex;
 
-        // Insert the dragged item at the new position
         newOrder.splice(insertIndex, 0, draggedItem);
 
-        // Update orders to be consecutive
-        return newOrder.map((item, index) => ({
-            ...item,
-            order: index + 1
-        }));
+        return newOrder;
     };
 
     const handleDragStart = (e: React.DragEvent, id: string) => {
@@ -63,6 +43,7 @@ export default function Home() {
         setDraggedId(null);
         setDropTargetId(null);
         setDropPosition(null);
+        document.body.classList.remove("dragging");
     };
 
     const handleDragOver = (e: React.DragEvent, targetId: string) => {
@@ -81,8 +62,8 @@ export default function Home() {
             setDropTargetId(targetId);
 
             // Update preview
-            const newPreviewItems = reorderItems(items, draggedId, targetId, isAfter);
-            setPreviewItems(newPreviewItems);
+            const newPreviewItems = reorderItems(renderedList, draggedId, targetId, isAfter);
+            setRenderedList(newPreviewItems);
         }
     };
 
@@ -103,15 +84,12 @@ export default function Home() {
 
         const isAfter = dropPosition?.isAfter ?? false;
 
-        // Update the actual items state
-        const newItems = reorderItems(items, draggedId, targetId, isAfter);
-        setItems(newItems);
+        const newItems = reorderItems(renderedList, draggedId, targetId, isAfter);
+        setRenderedList(newItems);
 
-        // Reset drag state
         handleDragEnd();
     };
 
-    // Add styles for drag and drop indicators
     const getDragIndicatorStyles = (itemId: string) => {
         let className = "transition-all duration-300 relative ";
 
@@ -132,7 +110,6 @@ export default function Home() {
 
     const renderGridItem = (item: GridItem) => {
         const commonProps = {
-            key: item.id,
             draggable: true,
             onDragStart: (e: React.DragEvent) => handleDragStart(e, item.id),
             onDragEnd: handleDragEnd,
@@ -152,14 +129,15 @@ export default function Home() {
         switch (item.id) {
             case "hero":
                 return (
-                    <div {...commonProps} className={`col-span-6 md:col-span-4 row-span-2 ${wrapperClassName}`}>
-                        <div className="flex h-full flex-wrap gap-4 content-center bg-neutral-300/20 sm:aspect-auto relative p-8 sm:p-12 border border-neutral-400/30 rounded-xl shadow-sm overflow-hidden cursor-move select-none">
+                    <div key={item.id} {...commonProps} className={`col-span-6 md:col-span-4 row-span-2 ${wrapperClassName}`}>
+                        <div className="drag-handle cursor-move select-none absolute top-0 left-0 w-full h-8 z-20"></div>
+                        <div className="flex h-full flex-wrap gap-4 content-center bg-neutral-300/20 sm:aspect-auto relative p-8 sm:p-12 border border-neutral-400/30 rounded-xl shadow-sm overflow-hidden">
                             <div className="content flex gap-4 flex-wrap max-w-60 sm:max-w-72 md:max-w-52 lg:max-w-64 relative z-10">
-                                <h2 className="font-bold text-xl sm:text-3xl md:text-2xl mb-0">Pretty cool title...</h2>
-                                <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                                <h2 className="font-bold text-xl sm:text-3xl md:text-2xl mb-0">Welcome to So's Bento</h2>
+                                <p>I'm Robert So, a software developer with a passion for building products that help people live better lives.</p>
                                 <div className="inline-flex">
                                     <Button link="https://github.com/christian-luntok/bent-o" className="mt-4" target="_blank">
-                                        Cool Button!
+                                        Find out More!
                                     </Button>
                                 </div>
                             </div>
@@ -175,14 +153,15 @@ export default function Home() {
                 );
             case "stats":
                 return (
-                    <div {...commonProps} className={`col-span-6 sm:col-span-3 md:col-span-2 row-span-1 ${wrapperClassName}`}>
-                        <div className="flex flex-wrap h-full md:h-60 content-start bg-neutral-300/20 relative aspect-square md:aspect-auto px-4 pt-8 border border-neutral-400/30 rounded-xl shadow-sm overflow-hidden bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-primary-200 via-primary-400 to-primary-600 cursor-move select-none">
+                    <div key={item.id} {...commonProps} className={`col-span-6 sm:col-span-3 md:col-span-2 row-span-1 ${wrapperClassName}`}>
+                        <div className="drag-handle cursor-move select-none absolute top-0 left-0 w-full h-8 z-20"></div>
+                        <div className="flex flex-wrap h-full md:h-60 content-start bg-neutral-300/20 relative aspect-square md:aspect-auto px-4 pt-8 border border-neutral-400/30 rounded-xl shadow-sm overflow-hidden bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-primary-200 via-primary-400 to-primary-600">
                             <div className="relative h-full w-full">
                                 <div className="content flex flex-wrap gap-1 text-white content-center justify-center md:max-w-64 relative z-10">
-                                    <h2 className="font-bold text-xl sm:text-3xl md:text-xl mb-0 w-full text-center">Pretty cool title...</h2>
-                                    <p>..or is it?</p>
+                                    <h2 className="font-bold text-xl sm:text-3xl md:text-xl mb-0 w-full text-center">My Portfolio</h2>
+                                    <p className="text-center">I spend most of my time moving things around</p>
                                 </div>
-                                <div className="image-container absolute flex bottom-0">
+                                <div className="image-container absolute bottom-0">
                                     <img src="/placeholder4.png" alt="Alt text" className="w-full aspect-auto" />
                                 </div>
                             </div>
@@ -191,12 +170,13 @@ export default function Home() {
                 );
             case "info":
                 return (
-                    <div {...commonProps} className={`col-span-6 sm:col-span-3 md:col-span-2 row-span-1 ${wrapperClassName}`}>
-                        <div className="flex flex-wrap gap-4 content-center md:content-start bg-neutral-300/20 relative aspect-square md:aspect-auto p-8 sm:p-12 border border-neutral-400/30 rounded-xl shadow-sm overflow-hidden cursor-move select-none">
+                    <div key={item.id} {...commonProps} className={`col-span-6 sm:col-span-3 md:col-span-2 row-span-1 ${wrapperClassName}`}>
+                        <div className="drag-handle cursor-move select-none absolute top-0 left-0 w-full h-8 z-20"></div>
+                        <div className="flex flex-wrap gap-4 content-center md:content-start bg-neutral-300/20 relative aspect-square md:aspect-auto p-8 sm:p-12 border border-neutral-400/30 rounded-xl shadow-sm overflow-hidden">
                             <div className="rounded-xl bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-200 via-primary-400 to-primary-600 relative z-10">
                                 <img src="https://img.icons8.com/3d-fluency/94/idea.png" alt="Idea icon by Icons8." className="w-full max-w-20 md:max-w-16" />
                             </div>
-                            <p className="relative z-10">Far far away, behind the word mountains.</p>
+                            <p className="relative z-10">What if I just made a drag and drop grid?</p>
                             <div className="absolute inset-0 w-full h-full">
                                 <div className="bg-gradient-to-t absolute from-[#e1e1e1] from-40% to-transparent w-full h-full"></div>
                                 <div className="bg-pattern one w-full h-full bg-contain"></div>
@@ -206,8 +186,9 @@ export default function Home() {
                 );
             case "about":
                 return (
-                    <div {...commonProps} className={`col-span-6 sm:col-span-2 ${wrapperClassName}`}>
-                        <div className="flex flex-col gap-4 cursor-move select-none">
+                    <div key={item.id} {...commonProps} className={`col-span-6 sm:col-span-2 ${wrapperClassName}`}>
+                        <div className="drag-handle cursor-move select-none absolute top-0 left-0 w-full h-8 z-20"></div>
+                        <div className="flex flex-col gap-4">
                             <Link
                                 href="#"
                                 className="flex flex-wrap gap-4 content-start bg-primary-500 relative py-4 px-12 border border-neutral-400/30 rounded-xl shadow-sm overflow-hidden hover:bg-primary-800 transition-colors duration-300"
@@ -237,8 +218,9 @@ export default function Home() {
                 );
             case "logo":
                 return (
-                    <div {...commonProps} className={`col-span-6 sm:col-span-3 lg:col-span-2 ${wrapperClassName}`}>
-                        <div className="flex flex-wrap gap-4 h-full content-start bg-neutral-300/20 relative p-8 sm:p-12 border border-neutral-400/30 rounded-xl cursor-move select-none">
+                    <div key={item.id} {...commonProps} className={`col-span-6 sm:col-span-3 lg:col-span-2 ${wrapperClassName}`}>
+                        <div className="drag-handle cursor-move select-none absolute top-0 left-0 w-full h-8 z-20"></div>
+                        <div className="flex flex-wrap gap-4 h-full content-start bg-neutral-300/20 relative p-8 sm:p-12 border border-neutral-400/30 rounded-xl">
                             <div className="grid gap-12">
                                 <a className="font-black text-2xl text-primary hover:text-primary-500 transition duration-500 flex items-center" href="/">
                                     <svg id="logo-81" width="72" height="40" viewBox="0 0 72 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo from https://logoipsum.com/.">
@@ -264,11 +246,12 @@ export default function Home() {
                 );
             case "quote":
                 return (
-                    <div {...commonProps} className={`col-span-6 sm:col-span-3 lg:col-span-4 ${wrapperClassName}`}>
-                        <div className="flex flex-wrap h-full gap-4 content-start bg-neutral-300/20 relative p-8 sm:p-12 border border-neutral-400/30 rounded-xl cursor-move select-none">
+                    <div key={item.id} {...commonProps} className={`col-span-6 sm:col-span-3 lg:col-span-4 ${wrapperClassName}`}>
+                        <div className="drag-handle cursor-move select-none absolute top-0 left-0 w-full h-8 z-20"></div>
+                        <div className="flex flex-wrap h-full gap-4 content-start bg-neutral-300/20 relative p-8 sm:p-12 border border-neutral-400/30 rounded-xl">
                             <div className="content w-full h-full flex content-end flex-wrap">
                                 <span className="text-xl md:text-2xl lg:text-3xl font-bold">
-                                    Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts...
+                                    Hence I created this style of portfolio, so I can drag and drop to my heart's content until the layout is just right.
                                 </span>
                             </div>
                         </div>
@@ -276,8 +259,9 @@ export default function Home() {
                 );
             case "banner1":
                 return (
-                    <div {...commonProps} className={`col-span-6 ${wrapperClassName}`}>
-                        <div className="flex flex-wrap gap-4 content-start bg-neutral-300/20 relative p-8 sm:p-12 border aspect-video md:aspect-[3/1] border-neutral-400/30 rounded-xl shadow-sm overflow-hidden cursor-move select-none">
+                    <div key={item.id} {...commonProps} className={`col-span-6 ${wrapperClassName}`}>
+                        <div className="drag-handle cursor-move select-none absolute top-0 left-0 w-full h-8 z-20"></div>
+                        <div className="flex flex-wrap gap-4 content-start bg-neutral-300/20 relative p-8 sm:p-12 border aspect-video md:aspect-[3/1] border-neutral-400/30 rounded-xl shadow-sm overflow-hidden">
                             <div className="image-container absolute flex w-full h-full inset-y-0 bottom-0 items-center right-0 flex-1 bg-[conic-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-primary-400 via-primary-800 to-primary-200">
                                 <span className="block bg-pattern one"></span>
                             </div>
@@ -286,8 +270,9 @@ export default function Home() {
                 );
             case "banner2":
                 return (
-                    <div {...commonProps} className={`col-span-6 ${wrapperClassName}`}>
-                        <div className="flex flex-wrap gap-4 content-start bg-neutral-300/20 relative p-8 sm:p-12 border sm:aspect-square md:aspect-auto lg:aspect-[3/1] border-neutral-400/30 rounded-xl shadow-sm overflow-hidden cursor-move select-none">
+                    <div key={item.id} {...commonProps} className={`col-span-6 ${wrapperClassName}`}>
+                        <div className="drag-handle cursor-move select-none absolute top-0 left-0 w-full h-8 z-20"></div>
+                        <div className="flex flex-wrap gap-4 content-start bg-neutral-300/20 relative p-8 sm:p-12 border sm:aspect-square md:aspect-auto lg:aspect-[3/1] border-neutral-400/30 rounded-xl shadow-sm overflow-hidden">
                             <div className="image-container flex w-full h-full items-center flex-1">
                                 <div className="flex flex-wrap max-w-[512px] gap-8 relative z-10">
                                     <span className="block text-xl sm:text-3xl font-bold">Looking for an awesome group of people to work with.</span>
@@ -310,7 +295,7 @@ export default function Home() {
 
     return (
         <section className="wrap-md w-full wrap-px pt-4 mx-auto">
-            <div className="grid grid-cols-6 gap-4">{previewItems.sort((a, b) => a.order - b.order).map(renderGridItem)}</div>
+            <div className="grid grid-cols-6 gap-4">{renderedList.map((item, _) => renderGridItem(item))}</div>
         </section>
     );
 }

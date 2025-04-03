@@ -28,7 +28,7 @@ export const Footer = () => {
                             </h1>
                             <p className="text-base">Click download to jazz it up with your style! 🚀.</p>
                             <Button link="https://github.com/christian-luntok/bent-o" className="mt-6 md:mt-8" target="_blank">
-                                Download Bent-o
+                                Save Layout
                             </Button>
                         </div>
                     </div>

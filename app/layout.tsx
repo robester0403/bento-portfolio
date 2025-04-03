@@ -5,9 +5,9 @@ import { Header } from "@components/global/header";
 import { Footer } from "@components/global/footer";
 
 export const metadata: Metadata = {
-    title: SITE.title || "Your Title",
-    description: SITE.desc || "Your company description.",
-    keywords: SITE.keywords || "Your company keywords",
+    title: SITE.title || "Robert So's Bento",
+    description: SITE.desc || "Robert So's Bento is a collection of my projects and experiences as a software engineer who loves to build products and learn new AI tools.",
+    keywords: SITE.keywords || "Robert So, React, Next.js, Langgraph, software engineer, AI, projects, experiences",
     icons: {
         icon: [
             { url: "/favicon-16x-16.png", sizes: "16x16", type: "image/png" },
@@ -21,9 +21,9 @@ export const metadata: Metadata = {
         }
     },
     openGraph: {
-        title: SITE.title || "Your Title",
-        description: SITE.desc || "Your company description.",
-        authors: SITE.author || "Your Author",
+        title: SITE.title || "Robert So's Bento",
+        description: SITE.desc || "Robert So's Bento is a collection of my projects and experiences as a software engineer who loves to build products and learn new AI tools.",
+        authors: SITE.author || "Robert So",
         images: [
             {
                 url: SITE.ogImage || "https://nextjs.org/og.png", // Must be an absolute URL
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
-            <body className="bg-neutral-200">
+            <body className="bg-neutral-100">
                 <Header />
                 <main className="main grid gap-8">{children}</main>
                 <Footer />
