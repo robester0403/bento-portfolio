@@ -2,20 +2,26 @@
 
 import { Button } from "@/components/global/button";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLayout } from "./layout-context";
 
 interface GridItem {
     id: string;
 }
 
 export default function Home() {
-    // TODO: Grab from server later
-    const initialItems = [{ id: "hero" }, { id: "stats" }, { id: "info" }, { id: "about" }, { id: "quote" }, { id: "logo" }, { id: "banner1" }];
-
+    const { renderedList, setRenderedList, isLoading } = useLayout();
     const [draggedId, setDraggedId] = useState<string | null>(null);
     const [dropTargetId, setDropTargetId] = useState<string | null>(null);
     const [dropPosition, setDropPosition] = useState<{ targetId: string; isAfter: boolean } | null>(null);
-    const [renderedList, setRenderedList] = useState<GridItem[]>(initialItems);
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+            </div>
+        );
+    }
 
     const reorderItems = (currentItems: GridItem[], draggedId: string, targetId: string, isAfter: boolean): GridItem[] => {
         const draggedItem = currentItems.find((item) => item.id === draggedId);

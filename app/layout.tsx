@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "@styles/globals.scss";
 import { SITE } from "@/config";
-import { Header } from "@components/global/header";
-import { Footer } from "@components/global/footer";
+import { Header } from "@/components/global/header";
+import { Footer } from "@/components/global/footer";
+import { LayoutProvider } from "./layout-context";
 
 export const metadata: Metadata = {
     title: SITE.title || "Robert So's Bento",
@@ -55,9 +56,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en">
             <body className="bg-neutral-100">
-                <Header />
-                <main className="main grid gap-8">{children}</main>
-                <Footer />
+                <LayoutProvider>
+                    <Header />
+                    <main className="main grid gap-8">{children}</main>
+                    <Footer />
+                </LayoutProvider>
             </body>
         </html>
     );

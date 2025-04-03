@@ -1,3 +1,5 @@
+"use client";
+
 import clsx from "clsx";
 import Link from "next/link";
 import type { ButtonProps, ButtonVariant } from "@/types";
@@ -11,14 +13,15 @@ const ButtonVariant: ButtonVariant = {
     text: "btn--text"
 };
 
-export const Button: React.FC<ButtonProps> = ({ children, link = "", action = "button", variant = "primary", className = "", mode = "link", target = "_self" }: ButtonProps) => {
+export const Button: React.FC<ButtonProps> = ({ children, link = "", action = "button", variant = "primary", className = "", mode = "link", target = "_self", onClick }: ButtonProps) => {
     const Element = mode === "button" ? "button" : Link;
 
     const commonAttributes = {
         role: "button",
         href: link ? link : "#",
         target: mode === "link" ? target : "_self",
-        className: clsx("btn", ButtonVariant[variant], className)
+        className: clsx("btn", ButtonVariant[variant], className),
+        ...(mode === "button" && onClick ? { onClick } : {})
     };
 
     const buttonAttributes = {

@@ -1,9 +1,19 @@
+"use client";
+
 import { Button } from "./button";
+import { useLayout } from "@/app/layout-context";
 
 const date = new Date();
 const year = date.getFullYear();
 
 export const Footer = () => {
+    const { renderedList, setRenderedList } = useLayout();
+
+    const handleSave = () => {
+        // Force a save by updating the state with the current list
+        setRenderedList([...renderedList]);
+    };
+
     return (
         <footer className="footer py-12 relative overflow-hidden">
             <div className="inner-container max-w-[512px] mx-auto wrap-px relative z-10">
@@ -27,7 +37,7 @@ export const Footer = () => {
                                 </a>
                             </h1>
                             <p className="text-base">Click download to jazz it up with your style! 🚀.</p>
-                            <Button link="https://github.com/christian-luntok/bent-o" className="mt-6 md:mt-8" target="_blank">
+                            <Button mode="button" onClick={handleSave} className="mt-6 md:mt-8">
                                 Save Layout
                             </Button>
                         </div>

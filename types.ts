@@ -17,6 +17,7 @@ export type ButtonProps = {
     mode?: "button" | "link";
     target?: HTMLAttributeAnchorTarget | undefined;
     children?: React.ReactNode;
+    onClick?: () => void;
 };
 
 export type ButtonVariant = {

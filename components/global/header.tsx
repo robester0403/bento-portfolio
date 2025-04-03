@@ -1,6 +1,16 @@
+"use client";
+
 import { Button } from "./button";
+import { useLayout } from "@/app/layout-context";
 
 export const Header = () => {
+    const { renderedList, setRenderedList } = useLayout();
+
+    const handleSave = () => {
+        // Force a save by updating the state with the current list
+        setRenderedList([...renderedList]);
+    };
+
     return (
         <header className="header py-4 relative z-10 w-100">
             <div className="inner-header-container wrap-md mx-auto wrap-px flex items-center justify-between">
@@ -23,7 +33,7 @@ export const Header = () => {
                     </h1>
                 </div>
                 <div className="inline-flex items-center gap-2 list-none space-x-2">
-                    <Button link="https://github.com/christian-luntok/bent-o" target="_blank">
+                    <Button mode="button" onClick={handleSave}>
                         Save Layout
                     </Button>
                 </div>
